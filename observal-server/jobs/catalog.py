@@ -4,12 +4,14 @@
 """Catalog and insights background jobs."""
 
 import structlog
+from loguru import logger as optic
 
 logger = structlog.get_logger(__name__)
 
 
 async def generate_insight_report(ctx: dict, report_id: str):
     """Background job: generate an insight report for an agent."""
+    optic.debug("job: generate_insight_report")
     from services.insights import INSIGHTS_AVAILABLE
 
     if not INSIGHTS_AVAILABLE:
@@ -30,6 +32,7 @@ async def generate_insight_report(ctx: dict, report_id: str):
 
 async def batch_generate_insights(ctx: dict):
     """Cron job: discover agents needing reports and queue generation."""
+    optic.debug("job: batch_generate_insights")
     from services.insights import INSIGHTS_AVAILABLE
 
     if not INSIGHTS_AVAILABLE:
@@ -50,6 +53,7 @@ async def batch_generate_insights(ctx: dict):
 
 async def refresh_model_catalog(ctx: dict):
     """Cron job: pre-warm the model catalog so user requests never hit a cold cache."""
+    optic.debug("job: refresh_model_catalog")
     from services.model_catalog import get_catalog
 
     try:
